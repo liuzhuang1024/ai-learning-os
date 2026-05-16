@@ -1,25 +1,40 @@
 // HTTP client. v0 uses an X-User-Id header instead of real auth — see
 // backend/src/app/routers/deps.py. Replace before any real user touches this.
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
-  Api._(this._dio);
+  Api(this.baseUrl, String userId)
+      : _dio = Dio(
+          BaseOptions(
+            baseUrl: baseUrl,
+            headers: {if (userId.isNotEmpty) 'X-User-Id': userId},
+            connectTimeout: const Duration(seconds: 5),
+            receiveTimeout: const Duration(seconds: 60),
+          ),
+        );
 
+  final String baseUrl;
   final Dio _dio;
 
-  static Future<Api> create({String baseUrl = 'http://localhost:8000'}) async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('user_id') ?? '';
-    final dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        headers: {'X-User-Id': userId},
-        connectTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 30),
-      ),
+  Future<Map<String, dynamic>> getAssessment() async {
+    final resp = await _dio.get('/onboarding/assessment');
+    return resp.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> submitAssessment({
+    required Map<String, int> answers,
+    required String backgroundSummary,
+    required String preferredStyle,
+  }) async {
+    final resp = await _dio.post(
+      '/onboarding/assessment',
+      data: {
+        'answers': answers,
+        'background_summary': backgroundSummary,
+        'preferred_style': preferredStyle,
+      },
     );
-    return Api._(dio);
+    return resp.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> getTodayQuest() async {
