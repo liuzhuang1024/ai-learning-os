@@ -4,8 +4,7 @@ import enum
 import uuid
 from datetime import date, datetime
 
-from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
@@ -22,9 +21,9 @@ class DailyQuest(Base):
 
     __tablename__ = "daily_quests"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), index=True
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True
     )
     date: Mapped[date] = mapped_column(Date, index=True)
     concept_id: Mapped[str] = mapped_column(String(80))
@@ -44,9 +43,9 @@ class QuizAttempt(Base):
 
     __tablename__ = "quiz_attempts"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     quest_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("daily_quests.id", ondelete="CASCADE"), index=True
+        Uuid, ForeignKey("daily_quests.id", ondelete="CASCADE"), index=True
     )
     question_index: Mapped[int] = mapped_column(Integer)
     user_answer: Mapped[str] = mapped_column(String(2000))

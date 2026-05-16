@@ -1,11 +1,9 @@
 """Async SQLAlchemy engine + session.
 
-Run `python -m app.db init` to create all tables for dev. Use alembic in prod.
+For dev table creation use `python -m app.cli init`. Use alembic in prod.
 """
 from __future__ import annotations
 
-import asyncio
-import sys
 from collections.abc import AsyncIterator
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -19,26 +17,29 @@ class Base(DeclarativeBase):
 
 
 _settings = get_settings()
-engine = create_async_engine(_settings.database_url, echo=False, pool_pre_ping=True)
+_is_sqlite = _settings.database_url.startswith("sqlite")
+
+# pool_pre_ping is a no-op on sqlite; skip to avoid noise.
+engine = create_async_engine(
+    _settings.database_url,
+    echo=False,
+    pool_pre_ping=not _is_sqlite,
+)
+
+# SQLite doesn't enforce foreign keys unless pragma is set per-connection.
+if _is_sqlite:
+    from sqlalchemy import event
+
+    @event.listens_for(engine.sync_engine, "connect")
+    def _enable_sqlite_fk(dbapi_conn, _):  # noqa: ANN001
+        cur = dbapi_conn.cursor()
+        cur.execute("PRAGMA foreign_keys=ON")
+        cur.close()
+
+
 SessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
 async def get_session() -> AsyncIterator[AsyncSession]:
     async with SessionLocal() as session:
         yield session
-
-
-async def _init_db() -> None:
-    # Import models so they register on Base.metadata before create_all.
-    from app.models import concept, memory, quest, user  # noqa: F401
-
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    print("✓ tables created")
-
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "init":
-        asyncio.run(_init_db())
-    else:
-        print("usage: python -m app.db init")

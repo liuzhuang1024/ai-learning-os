@@ -37,7 +37,15 @@ async def record_answer(
     mastery = (await session.execute(stmt)).scalar_one_or_none()
 
     if mastery is None:
-        mastery = ConceptMastery(user_id=user_id, concept_id=concept_id, confidence=0.0)
+        # Set counters explicitly: column `default=0` only applies at INSERT,
+        # so before flush the attrs would be None and `+= 1` would TypeError.
+        mastery = ConceptMastery(
+            user_id=user_id,
+            concept_id=concept_id,
+            confidence=0.0,
+            correct_count=0,
+            incorrect_count=0,
+        )
         session.add(mastery)
 
     if is_correct:

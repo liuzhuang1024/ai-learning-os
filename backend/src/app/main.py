@@ -7,7 +7,7 @@ from fastapi import FastAPI
 
 from app.config import get_settings
 from app.knowledge.loader import load_graph
-from app.routers import memory, onboarding, quest, tutor
+from app.routers import dev, memory, onboarding, quest, tutor
 
 logging.basicConfig(level=get_settings().log_level)
 log = logging.getLogger(__name__)
@@ -25,6 +25,10 @@ app.include_router(onboarding.router)
 app.include_router(quest.router)
 app.include_router(tutor.router)
 app.include_router(memory.router)
+
+# Dev endpoints (seed-user, reload-knowledge) — production builds never see them.
+if get_settings().app_env == "dev":
+    app.include_router(dev.router)
 
 
 @app.get("/health")

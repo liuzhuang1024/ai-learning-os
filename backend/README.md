@@ -17,7 +17,7 @@ docker run -d --name learning-os-pg -p 5432:5432 \
   -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=learning_os postgres:16
 
 # 4. 初始化数据库（alembic 暂未生成 migrations，开发期先用 create_all）
-uv run python -m app.db init
+uv run python -m app.cli init
 
 # 5. 拉一个 Ollama 模型（首次）
 ollama serve &           # 如果还没起

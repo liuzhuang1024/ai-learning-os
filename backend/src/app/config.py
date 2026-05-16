@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     app_env: str = "dev"
     log_level: str = "INFO"
 
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/learning_os"
+    # SQLite by default — zero-setup. Switch to Postgres by overriding DATABASE_URL.
+    database_url: str = "sqlite+aiosqlite:///./learning_os.db"
 
     # LLM backend: "ollama" (local, default) | "anthropic"
     llm_backend: str = "ollama"

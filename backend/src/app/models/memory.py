@@ -8,8 +8,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
@@ -26,7 +25,7 @@ class ConceptMastery(Base):
     __tablename__ = "concept_mastery"
 
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
     concept_id: Mapped[str] = mapped_column(String(80), primary_key=True)
 
@@ -44,7 +43,7 @@ class UserProfile(Base):
     __tablename__ = "user_profiles"
 
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
     # one of: analogy | code | formula | mixed
     preferred_style: Mapped[str] = mapped_column(String(20), default="mixed")
