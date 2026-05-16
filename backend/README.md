@@ -10,7 +10,7 @@ uv sync
 
 # 2. 配置环境
 cp .env.example .env
-# 编辑 .env，填入 ANTHROPIC_API_KEY、DATABASE_URL 等
+# 默认走本地 Ollama，无需 API key。如要切云端：LLM_BACKEND=anthropic + ANTHROPIC_API_KEY
 
 # 3. 起一个本地 Postgres（任选其一）
 docker run -d --name learning-os-pg -p 5432:5432 \
@@ -19,7 +19,11 @@ docker run -d --name learning-os-pg -p 5432:5432 \
 # 4. 初始化数据库（alembic 暂未生成 migrations，开发期先用 create_all）
 uv run python -m app.db init
 
-# 5. 启动
+# 5. 拉一个 Ollama 模型（首次）
+ollama serve &           # 如果还没起
+ollama pull qwen2.5:7b   # 或 llama3.2:3b（更小更快），改 .env 的 OLLAMA_MODEL 对应
+
+# 6. 启动
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
@@ -56,5 +60,5 @@ src/app/
 
 - **Memory 是核心**：每次 quiz 答题、每次对话都会更新 `ConceptMastery`。这是个性化的唯一真相源。
 - **Knowledge 是数据，不是代码**：人工维护的 YAML 文件放在 `knowledge/`，后端启动时加载到内存。改概念不用改代码。
-- **LLM 调用都过 services/llm.py**：方便切模型、加缓存、统计 token。
+- **LLM 调用都过 services/llm.py**：单入口，支持 `ollama`（本地，默认）和 `anthropic` 两种 backend，调用方代码不变。
 - **Quest 内容初期半人工**：v1 阶段每个 concept 自带题库（写在 YAML 里），LLM 只负责生成解释和补充练习。

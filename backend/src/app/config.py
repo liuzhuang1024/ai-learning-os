@@ -13,10 +13,19 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/learning_os"
 
+    # LLM backend: "ollama" (local, default) | "anthropic"
+    llm_backend: str = "ollama"
+
+    # Ollama — works for both local (http://localhost:11434, no key) and
+    # Ollama Cloud (https://ollama.com, requires OLLAMA_API_KEY).
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen2.5:7b"
+    ollama_api_key: str = ""
+    ollama_timeout_s: int = 120
+
+    # Anthropic (cloud)
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-sonnet-4-6"
-    qwen_api_key: str = ""
-    qwen_model: str = "qwen-plus"
 
     daily_token_budget_per_user: int = 20_000
 
