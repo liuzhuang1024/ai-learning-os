@@ -1,0 +1,43 @@
+id: math_vectors
+name: 向量与点积
+category: math
+difficulty: 1
+prerequisites: []
+
+definition: |
+  向量是有方向和大小的数学对象，可以看作一组有序数。两个向量的点积是
+  对应元素相乘后求和，结果是一个标量。点积衡量了两个向量「方向上的一致性」。
+
+analogy: |
+  把两个向量想象成两条箭头。点积大 ≈ 两支箭头指向相近；点积为 0 ≈ 垂直；
+  点积为负 ≈ 朝相反方向。在推荐系统里，"用户向量"和"物品向量"的点积越大，
+  就越像。
+
+formula: |
+  a · b = Σ a_i * b_i = |a| |b| cos θ
+
+code_example: |
+  import numpy as np
+  a = np.array([1, 2, 3])
+  b = np.array([4, 5, 6])
+  print(a @ b)  # 32
+
+quiz_bank:
+  - question: 两个向量 [1, 2] 和 [3, 4] 的点积是多少？
+    options: ["7", "10", "11", "14"]
+    answer_index: 2
+    explanation: 1*3 + 2*4 = 3 + 8 = 11
+
+  - question: 当两个非零向量的点积为 0 时，它们的几何关系是？
+    options: ["平行", "反向", "垂直", "重合"]
+    answer_index: 2
+    explanation: 点积 = |a||b|cosθ，cosθ = 0 意味着 θ = 90°，两向量垂直。
+
+  - question: 在 ML 里，"用户向量"和"物品向量"的点积通常用来表达什么？
+    options:
+      - 物品的价格
+      - 用户对物品的偏好程度
+      - 物品的库存量
+      - 用户的活跃天数
+    answer_index: 1
+    explanation: 协同过滤的核心——点积越大，方向越一致，偏好越高。

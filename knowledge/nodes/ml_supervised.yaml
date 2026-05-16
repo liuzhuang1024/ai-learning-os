@@ -1,0 +1,47 @@
+id: ml_supervised
+name: 监督学习核心思想
+category: ml
+difficulty: 2
+prerequisites: [math_vectors, python_basics]
+
+definition: |
+  监督学习是从「输入-标签」配对的数据中学习一个映射 f(x) → y 的过程。
+  核心是定义一个损失函数衡量预测与真实标签的差距，然后调整模型参数
+  使损失最小。
+
+analogy: |
+  像你小时候做填空题：题目是 x，正确答案是 y，你做错了就被打叉，看了
+  答案再试一次。"被打叉的次数"就是损失，"看答案后调整"就是梯度下降。
+  无监督学习则是没有答案纸，自己去找规律。
+
+code_example: |
+  from sklearn.linear_model import LogisticRegression
+  from sklearn.datasets import load_iris
+
+  X, y = load_iris(return_X_y=True)
+  model = LogisticRegression(max_iter=200).fit(X, y)
+  print(model.score(X, y))  # 训练集准确率
+
+quiz_bank:
+  - question: 监督学习区别于无监督学习的最核心特征是什么？
+    options: ["数据量大", "有标签", "模型复杂", "需要 GPU"]
+    answer_index: 1
+    explanation: 是否有标签 (y) 决定了"监督"vs"无监督"，其他都不是本质区别。
+
+  - question: 下列哪个是典型的监督学习任务？
+    options:
+      - 把新闻聚类成 5 个主题
+      - 根据图片判断是猫还是狗
+      - 给用户的购买历史建嵌入向量
+      - 用 PCA 给数据降维
+    answer_index: 1
+    explanation: 猫/狗是预先定义好的标签，所以是分类（监督学习）。其他选项都没有标签。
+
+  - question: 在监督学习训练过程中，"损失函数"的作用是什么？
+    options:
+      - 加快训练速度
+      - 量化模型预测与真实标签的差距
+      - 增加模型的非线性
+      - 防止过拟合
+    answer_index: 1
+    explanation: 损失函数是优化的目标，所有梯度下降都是在最小化它。正则化是另一码事。

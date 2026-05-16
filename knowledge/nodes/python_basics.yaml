@@ -1,0 +1,40 @@
+id: python_basics
+name: Python 基础语法
+category: python
+difficulty: 1
+prerequisites: []
+
+definition: |
+  Python 是 ML 生态的事实标准语言。AI 转型期需要熟练掌握的最小子集：
+  数据结构（list/dict/tuple）、推导式、函数、类、上下文管理器。
+
+analogy: |
+  Python 之于 ML，就像英语之于学术——你不需要文学造诣，但每一篇 paper、
+  每一个开源库都用它写。会读会改，胜过会写。
+
+code_example: |
+  # list comprehension —— ML 代码里出现最频繁的语法之一
+  squares = [x ** 2 for x in range(10) if x % 2 == 0]
+
+  # dict comprehension
+  vocab = {word: idx for idx, word in enumerate(["hello", "world"])}
+
+quiz_bank:
+  - question: 下列哪个是 Python list comprehension 的正确语法？
+    options:
+      - "[x for x in iterable]"
+      - "{x : x in iterable}"
+      - "(x; x in iterable)"
+      - "list(x in iterable)"
+    answer_index: 0
+    explanation: list comprehension 使用方括号包裹 `expr for var in iterable`。
+
+  - question: 下列代码运行后 result 的值是？`result = [x*2 for x in [1,2,3] if x > 1]`
+    options: ["[2,4,6]", "[4,6]", "[2,4]", "[]"]
+    answer_index: 1
+    explanation: 过滤掉 x=1，剩 x=2,3，乘 2 得 [4,6]。
+
+  - question: 在 PyTorch / NumPy 代码里，`with torch.no_grad():` 这种语法依赖于 Python 的哪个特性？
+    options: ["装饰器", "上下文管理器", "生成器", "元类"]
+    answer_index: 1
+    explanation: with 语句使用上下文管理器协议（__enter__/__exit__）来管理资源。
